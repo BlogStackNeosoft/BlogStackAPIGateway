@@ -1,31 +1,26 @@
 server:
   port: 8080
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+
+blogstack:
+  usermanagement:
+    getbyemail:
+      endpoint: http://ec2-18-212-53-8.compute-1.amazonaws.com:9091/v1.0/user/
 spring:
   application:
     name: API-GATEWAY
   cloud:
     gateway:
       routes:
-        - id: DEMO-SERVICE
-          uri: lb://DEMO-SERVICE
+#        - id: USER-SERVICE
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/userservice/**
+
+        - id: USER-MANAGEMENT-SERVICE
+          uri: http://ec2-18-212-53-8.compute-1.amazonaws.com:9091
           predicates:
-            - Path=/api/demo/**
-        - id: MASTER-SERVICE
-          uri: lb://ec2-18-212-64-146.compute-1.amazonaws.com:9090
-          predicates:
-            - Path=/question/**
-        - id: BLOGSTACKIAMSERVICE
-          uri: lb://BLOGSTACKIAMSERVICE
-          predicates:
-            - Path=/authentication/** ,
+            - Path=/v1.0/authentication/**,/v1.0/user/**
+
 
 
 

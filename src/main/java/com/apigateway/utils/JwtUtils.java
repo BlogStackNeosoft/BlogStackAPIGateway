@@ -43,7 +43,8 @@ public class JwtUtils {
     public Boolean validateToken(String token) {
         final String email = getSubject(token);
         LOGGER.info("email ==>"+email);
-        Optional<?> user = restTemplate.getForEntity("http://localhost:8080/v1.0/user/"+email,Optional.class).getBody();
+
+        Optional<?> user = restTemplate.getForEntity("${blogstack.usermanagement.getbyemail.endpoint}"+email,Optional.class).getBody();
         //return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         return (user.isPresent() && !isTokenExpired(token));
     }

@@ -5,6 +5,7 @@ import com.apigateway.customproviders.CustomSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -27,7 +28,7 @@ public class SecurityConfig {
     protected SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity){
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable())
                 .cors((corsSpec -> corsSpec.disable()))
-                .authorizeExchange(exchange-> exchange.pathMatchers("/api/demo","/api/demo/login","/api/demo/auth/refresh","/authentication/**").permitAll()
+                .authorizeExchange(exchange-> exchange.pathMatchers("/v1.0/authentication/**","/v1.0/role/**","/v1.0/user/**").permitAll()
                         .anyExchange().authenticated())
                 .formLogin(formLoginSpec -> formLoginSpec.disable());
 
@@ -39,10 +40,5 @@ public class SecurityConfig {
                         Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN))));
 
         return serverHttpSecurity.build();
-    }
-
-    @Bean
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
     }
 }
