@@ -1,19 +1,20 @@
 package com.apigateway.utils;
 
+import com.apigateway.dtos.BlogStackRoleDetails;
+import com.apigateway.helpers.RoleControllerMappingHelper;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class JwtUtils {
 
 
@@ -31,7 +32,7 @@ public class JwtUtils {
         return parsClaims(token).getSubject();
     }
 
-    private Claims parsClaims(String token)
+    public Claims parsClaims(String token)
     {
             return Jwts.parser()
                     .setSigningKey(SECRET_KEY)
@@ -39,13 +40,12 @@ public class JwtUtils {
                     .getBody();
 
     }
-
     public Boolean validateToken(String token) {
         final String email = getSubject(token);
         LOGGER.info("email ==>"+email);
+        Optional<?> user = restTemplate.getForEntity("http://localhost:9091/v1.0/user/"+email,Optional.class).getBody();
 
-        Optional<?> user = restTemplate.getForEntity("${blogstack.usermanagement.getbyemail.endpoint}"+email,Optional.class).getBody();
-        //return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        // return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         return (user.isPresent() && !isTokenExpired(token));
     }
     private Boolean isTokenExpired(String token) {

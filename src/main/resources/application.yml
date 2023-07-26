@@ -4,7 +4,7 @@ server:
 blogstack:
   usermanagement:
     getbyemail:
-      endpoint: http://ec2-18-212-53-8.compute-1.amazonaws.com:9091/v1.0/user/
+      endpoint: http://localhost:9091/v1.0/user/
 spring:
   application:
     name: API-GATEWAY
