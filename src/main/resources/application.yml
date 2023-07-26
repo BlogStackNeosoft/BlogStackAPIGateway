@@ -10,9 +10,19 @@ spring:
     name: API-GATEWAY
   cloud:
     gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
       routes:
         - id: BLOGSTACK-QNA-HUB-SERVICE
-          uri:
+          uri: http://ec2-18-212-53-8.compute-1.amazonaws.com:9091
           predicates:
             - Path=/v1.0/question/**,/v1.0/answer/**,/v1.0/comment/**,/v1.0/subcategory/**
 
