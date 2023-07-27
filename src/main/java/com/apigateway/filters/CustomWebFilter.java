@@ -1,6 +1,7 @@
 package com.apigateway.filters;
 
-import com.apigateway.exceptions.BlogStackUnauthorizedEndpointAccessException;
+import com.apigateway.commons.BlogStackApiGatewayCommons;
+import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
 import com.apigateway.helpers.RoleControllerMappingHelper;
 import com.apigateway.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -31,17 +32,14 @@ public class CustomWebFilter implements WebFilter {
     @SneakyThrows(Exception.class)
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String uri = exchange.getRequest().getURI().getPath();
-        log.info("The request path intercepted in webfiletr: "+exchange.getRequest().getURI().getPath());
+
         String jwtToken = exchange.getRequest()
                 .getHeaders()
                 .getFirst(HttpHeaders.AUTHORIZATION)
                 .substring(7);
 
         Claims claims = this.jwtUtils.parsClaims(jwtToken);
-        List<String> roles = (List) claims.get("roles");
-
-        log.info("Printing the roles decrypted from the token:");
-        log.info(String.format("List: %s ",roles));
+        List<String> tokenEncryptedRoles = (List) claims.get(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.CLAIM_EXTRACTION_KEY);
 
         Map<String, Set<String>> blogStackAllRoleToControllerMapping =  RoleControllerMappingHelper.getBlogStackAllRoleToControllerMapping();
         int count = 0;
@@ -50,22 +48,26 @@ public class CustomWebFilter implements WebFilter {
         Iterator<String> blogStackRolesIterator = blogStackRoles.iterator();
 
         BLOGSTACK_OUTER_WHILE_LOOP: while(blogStackRolesIterator.hasNext()){
+            int rolesIndex = 0;
             String currentRole = blogStackRolesIterator.next();
-            if(currentRole.equals(roles.get(0))){
-                Set<String> blogStackRoleEndpoints = blogStackAllRoleToControllerMapping.get(currentRole);
-                Iterator<String> blogStackEndponitsIterator = blogStackRoleEndpoints.iterator();
-                while(blogStackEndponitsIterator.hasNext()){
-                    if(blogStackEndponitsIterator.next().equals(uri))
-                    {
-                        count++;
-                        break BLOGSTACK_OUTER_WHILE_LOOP;
+            for(int i=0; i < tokenEncryptedRoles.size();i++){
+                if(currentRole.equals(tokenEncryptedRoles.get(rolesIndex++))){
+                    Set<String> blogStackRoleEndpoints = blogStackAllRoleToControllerMapping.get(currentRole);
+                    Iterator<String> blogStackEndponitsIterator = blogStackRoleEndpoints.iterator();
+                    while(blogStackEndponitsIterator.hasNext()){
+                        if(blogStackEndponitsIterator.next().equals(uri))
+                        {
+                            log.info("The control has reached till the inner code of incrementing the counter");
+                            count++;
+                            break BLOGSTACK_OUTER_WHILE_LOOP;
+                        }
                     }
                 }
             }
         }
 
         if(count == 0)
-            throw new BlogStackUnauthorizedEndpointAccessException(HttpStatusCode.valueOf(401),"The user is unauthorized to access the resource endpoint");
+            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"The user is unauthorized to access the resource endpoint");
 
         return chain.filter(exchange);
     }

@@ -4,7 +4,6 @@ import com.apigateway.commons.BlogStackQnaHubServiceBaseEndpoints;
 import com.apigateway.commons.BlogStackUserManagementServiceBaseEndpoints;
 import com.apigateway.commons.BlogStackUserRolesCommons;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
