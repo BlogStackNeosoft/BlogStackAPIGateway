@@ -2,6 +2,22 @@ server:
   port: 8080
 
 blogstack:
+  roles:
+    adminrole: BLOGSTACK-ADMIN
+    userrole: BLOGSTACK-USER
+
+  service:
+    base-endpoint:
+      usermanagementservice:
+        authenticationcontroller: /v1.0/authentication/
+        rolecontroller: /v1.0/role/
+        usercontroller: /v1.0/user/
+      qnahubservice:
+        questionscontroller: /v1.0/question/
+        answerscontroller: /v1.0./answer/
+        commentscontroller: /v1.0/comment/
+        subcategorycontroller: /v1.0/subcategory/
+
   usermanagement:
     getbyemail:
       endpoint: http://localhost:9091/v1.0/user/
@@ -34,6 +50,9 @@ spring:
 
 
 service-version: v1.0
+authentication-controller-endpoint: /v1.0/authentication/
+
+
 
 
 

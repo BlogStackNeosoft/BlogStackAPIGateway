@@ -1,5 +1,6 @@
 package com.apigateway.filters;
 
+import com.apigateway.exceptions.BlogStackUnauthorizedEndpointAccessException;
 import com.apigateway.helpers.RoleControllerMappingHelper;
 import com.apigateway.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -7,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -39,20 +41,31 @@ public class CustomWebFilter implements WebFilter {
         List<String> roles = (List) claims.get("roles");
 
         log.info("Printing the roles decrypted from the token:");
-        log.info(String.format("List: %s",roles));
+        log.info(String.format("List: %s ",roles));
 
         Map<String, Set<String>> blogStackAllRoleToControllerMapping =  RoleControllerMappingHelper.getBlogStackAllRoleToControllerMapping();
         int count = 0;
-        Set<String> endpoints = blogStackAllRoleToControllerMapping.get(roles.get(0));
-        Iterator<String> iterator = endpoints.iterator();
-        while(iterator.hasNext()){
-            if(iterator.next().equals(uri)) {
-                count++;
-                break;
+
+        Set<String> blogStackRoles = blogStackAllRoleToControllerMapping.keySet();
+        Iterator<String> blogStackRolesIterator = blogStackRoles.iterator();
+
+        BLOGSTACK_OUTER_WHILE_LOOP: while(blogStackRolesIterator.hasNext()){
+            String currentRole = blogStackRolesIterator.next();
+            if(currentRole.equals(roles.get(0))){
+                Set<String> blogStackRoleEndpoints = blogStackAllRoleToControllerMapping.get(currentRole);
+                Iterator<String> blogStackEndponitsIterator = blogStackRoleEndpoints.iterator();
+                while(blogStackEndponitsIterator.hasNext()){
+                    if(blogStackEndponitsIterator.next().equals(uri))
+                    {
+                        count++;
+                        break BLOGSTACK_OUTER_WHILE_LOOP;
+                    }
+                }
             }
         }
+
         if(count == 0)
-            throw new Exception("The role has failed authorization");
+            throw new BlogStackUnauthorizedEndpointAccessException(HttpStatusCode.valueOf(401),"The user is unauthorized to access the resource endpoint");
 
         return chain.filter(exchange);
     }
