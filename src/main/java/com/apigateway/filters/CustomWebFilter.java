@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -57,7 +58,7 @@ public class CustomWebFilter implements WebFilter {
                     while(blogStackEndponitsIterator.hasNext()){
                         if(blogStackEndponitsIterator.next().equals(uri))
                         {
-                            log.info("The control has reached till the inner code of incrementing the counter");
+                            /*log.info("The control has reached till the inner code of incrementing the counter");*/
                             count++;
                             break BLOGSTACK_OUTER_WHILE_LOOP;
                         }
@@ -66,8 +67,11 @@ public class CustomWebFilter implements WebFilter {
             }
         }
 
-        if(count == 0)
-            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"The user is unauthorized to access the resource endpoint");
+        if(count == 0){
+            log.info("unauthorized exception");
+            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),new ResponseStatusException(HttpStatusCode.valueOf(401),"The user is not authorized to access the resource").getReason());
+        }
+
 
         return chain.filter(exchange);
     }

@@ -46,6 +46,7 @@ public class JwtUtils {
             throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"JWT signature does not match locally computed signature");
         }
         catch (ExpiredJwtException expiredJwtException){
+            log.info("Expiration-Exception");
             throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"JWT token has expired");
         }
 

@@ -17,7 +17,6 @@ public class RoleControllerMappingHelper {
 
     public static Map<String, Set<String>> getBlogStackAllRoleToControllerMapping(){
 
-        log.info("Printing the values fetched from resources: ");
         log.info(BlogStackUserManagementServiceBaseEndpoints.AUTHENTICATION_CONTROLLER);
         // Data structure to store all the admin endpoints
         Set<String> blogStackAdminEndpoints = new LinkedHashSet<>();
