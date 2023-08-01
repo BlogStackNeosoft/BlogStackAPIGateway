@@ -27,7 +27,7 @@ public class SecurityConfig {
     protected SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity){
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable())
                 .cors((corsSpec -> corsSpec.disable()))
-                .authorizeExchange(exchange-> exchange.pathMatchers("/api/demo","/api/demo/login","/api/demo/auth/refresh","/authentication/**").permitAll()
+                .authorizeExchange(exchange-> exchange.pathMatchers("/api/demo","/api/demo/login","/api/demo/auth/refresh","/authentication/**","/fallback/**").permitAll()
                         .anyExchange().authenticated())
                 .formLogin(formLoginSpec -> formLoginSpec.disable());
 
