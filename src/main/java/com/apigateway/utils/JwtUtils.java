@@ -1,19 +1,21 @@
 package com.apigateway.utils;
 
+import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class JwtUtils {
 
 
@@ -31,20 +33,38 @@ public class JwtUtils {
         return parsClaims(token).getSubject();
     }
 
-    private Claims parsClaims(String token)
+    public Claims parsClaims(String token)
     {
+        try {
             return Jwts.parser()
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token)
                     .getBody();
+        }
+        catch (SignatureException signatureException){
+            log.info("SignatureException");
+            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"JWT signature does not match locally computed signature");
+        }
+        catch (ExpiredJwtException expiredJwtException){
+            log.info("Expiration-Exception");
+            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"JWT token has expired");
+        }
+
 
     }
-
     public Boolean validateToken(String token) {
         final String email = getSubject(token);
-        LOGGER.info("email ==>"+email);
-        Optional<?> user = restTemplate.getForEntity("http://localhost:8080/v1.0/user/"+email,Optional.class).getBody();
-        //return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        Optional<?> user = null;
+        try{
+            user = restTemplate.getForEntity("http://localhost:9091/v1.0/user/"+email,Optional.class).getBody();
+        }
+        catch (ResourceAccessException resourceAccessException){
+            log.info("ResourceAccessException");
+            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(503),"The Service is temporarily unavailable");
+        }
+
+
+        // return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         return (user.isPresent() && !isTokenExpired(token));
     }
     private Boolean isTokenExpired(String token) {

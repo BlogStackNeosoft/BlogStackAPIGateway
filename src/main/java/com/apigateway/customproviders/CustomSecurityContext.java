@@ -1,5 +1,6 @@
 package com.apigateway.customproviders;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
+@Slf4j
 public class CustomSecurityContext implements ServerSecurityContextRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomSecurityContext.class);
@@ -34,6 +36,7 @@ public class CustomSecurityContext implements ServerSecurityContextRepository {
                 .flatMap(authHeader -> {
                     String token = authHeader.substring(7);
                     Authentication auth = new UsernamePasswordAuthenticationToken(token,token);
+                    log.info("Before executing authenticate method");
                     return this.reactiveAuthenticationManager.authenticate(auth)
                             .switchIfEmpty(Mono.error(new Exception("Invalid Authentication Token")))
                             .map(SecurityContextImpl::new);
