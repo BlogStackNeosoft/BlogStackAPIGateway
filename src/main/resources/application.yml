@@ -1,48 +1,42 @@
 server:
   port: 8080
-
-blogstack:
-  roles:
-    adminrole: BLOGSTACK-ADMIN
-    userrole: BLOGSTACK-USER
-
-  service:
-    base-endpoint:
-      usermanagementservice:
-        authenticationcontroller: /v1.0/authentication/
-        rolecontroller: /v1.0/role/
-        usercontroller: /v1.0/user/
-      qnahubservice:
-        questionscontroller: /v1.0/question/
-        answerscontroller: /v1.0./answer/
-        commentscontroller: /v1.0/comment/
-        subcategorycontroller: /v1.0/subcategory/
-
-  usermanagement:
-    getbyemail:
-      endpoint: http://localhost:9091/v1.0/user/
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 spring:
+  main:
+    allow-circular-references: true
   application:
     name: API-GATEWAY
   cloud:
    gateway:
       routes:
-        - id: BLOGSTACK-QNA-HUB-SERVICE
-          uri: http://localhost:9090
+        - id: DEMO-SERVICE
+          uri: lb://DEMO-SERVICE
           predicates:
-            - Path=/v1.0/question/**,/v1.0/answer/**,/v1.0/comment/**,/v1.0/subcategory/**
+            - Path=/api/demo/**
 
-        - id: USER-MANAGEMENT-SERVICE
-          uri: http://localhost:9091
+        - id: MASTER-SERVICE
+          uri: lb://ec2-18-212-64-146.compute-1.amazonaws.com:9090
           predicates:
-            - Path=/v1.0/authentication/**,/v1.0/user/**
+            - Path=/question/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: MASTER-SERVICE
+                fallbackuri: forward:/fallback/blog-stack
 
-
-
-service-version: v1.0
-authentication-controller-endpoint: /v1.0/authentication/
-
-
-
-
-
+        - id: BLOGSTACKIAMSERVICE
+          uri: lb://BLOGSTACKIAMSERVICE
+          predicates:
+            - Path=/authentication/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: BLOGSTACKIAMSERVICE
+                fallbackuri: forward:/fallback/blog-stack

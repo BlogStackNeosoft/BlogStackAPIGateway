@@ -42,8 +42,11 @@ public class SecurityConfig {
         });
 
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable())
+
                 // .cors((corsSpec -> corsSpec.disable()))
                 .authorizeExchange(exchange-> exchange.pathMatchers("/v1.0/authentication/**","/v1.0/role/**").permitAll()
+
+                //.cors((corsSpec -> corsSpec.disable()))
                         .anyExchange().authenticated())
                 .formLogin(formLoginSpec -> formLoginSpec.disable());
         // serverHttpSecurity.addFilterAfter(this.customWebFilter, SecurityWebFiltersOrder.AUTHORIZATION);
