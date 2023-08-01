@@ -9,6 +9,8 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 spring:
+  main:
+    allow-circular-references: true
   application:
     name: API-GATEWAY
   cloud:
@@ -18,14 +20,23 @@ spring:
           uri: lb://DEMO-SERVICE
           predicates:
             - Path=/api/demo/**
+
         - id: MASTER-SERVICE
           uri: lb://ec2-18-212-64-146.compute-1.amazonaws.com:9090
           predicates:
             - Path=/question/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: MASTER-SERVICE
+                fallbackuri: forward:/fallback/blog-stack
+
         - id: BLOGSTACKIAMSERVICE
           uri: lb://BLOGSTACKIAMSERVICE
           predicates:
-            - Path=/authentication/** ,
-
-
-
+            - Path=/authentication/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: BLOGSTACKIAMSERVICE
+                fallbackuri: forward:/fallback/blog-stack
