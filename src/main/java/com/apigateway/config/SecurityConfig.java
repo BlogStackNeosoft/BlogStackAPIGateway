@@ -32,7 +32,9 @@ public class SecurityConfig {
     protected SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity){
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable())
                 .cors((corsSpec -> corsSpec.disable()))
-                .authorizeExchange(exchange-> exchange.pathMatchers("/v1.0/authentication/**","/v1.0/role/**").permitAll()
+
+                .authorizeExchange(exchange-> exchange.pathMatchers("/api/demo","/api/demo/login","/api/demo/auth/refresh","/authentication/**","/fallback/**").permitAll()
+
                         .anyExchange().authenticated())
                 .formLogin(formLoginSpec -> formLoginSpec.disable());
         // serverHttpSecurity.addFilterAfter(this.customWebFilter, SecurityWebFiltersOrder.AUTHORIZATION);
