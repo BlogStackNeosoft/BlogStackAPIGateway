@@ -25,17 +25,7 @@ spring:
   application:
     name: API-GATEWAY
   cloud:
-#    gateway:
-#      globalcors:
-#        corsConfigurations:
-#          '[/**]':
-#            allowedOrigins: "http://localhost:4200"
-#            allowedHeaders: "*"
-#            allowedMethods:
-#              - GET
-#              - POST
-#              - PUT
-#              - DELETE
+   gateway:
       routes:
         - id: BLOGSTACK-QNA-HUB-SERVICE
           uri: http://localhost:9090
