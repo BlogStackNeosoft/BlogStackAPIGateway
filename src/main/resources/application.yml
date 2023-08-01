@@ -14,7 +14,7 @@ spring:
   application:
     name: API-GATEWAY
   cloud:
-    gateway:
+   gateway:
       routes:
         - id: DEMO-SERVICE
           uri: lb://DEMO-SERVICE

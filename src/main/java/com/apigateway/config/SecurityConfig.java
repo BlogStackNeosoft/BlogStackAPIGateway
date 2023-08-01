@@ -14,7 +14,10 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.CorsConfiguration;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -30,11 +33,20 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity){
+        serverHttpSecurity.cors().configurationSource(request -> {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(List.of("*"));
+            configuration.setAllowedMethods(List.of("*"));
+            configuration.setAllowedHeaders(List.of("*"));
+            return configuration;
+        });
+
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable())
+ 
+                
+                .authorizeExchange(exchange-> exchange.pathMatchers("/v1.0/authentication/**","/v1.0/role/**").permitAll()
                 .cors((corsSpec -> corsSpec.disable()))
-
-                .authorizeExchange(exchange-> exchange.pathMatchers("/api/demo","/api/demo/login","/api/demo/auth/refresh","/authentication/**","/fallback/**").permitAll()
-
+         
                         .anyExchange().authenticated())
                 .formLogin(formLoginSpec -> formLoginSpec.disable());
         // serverHttpSecurity.addFilterAfter(this.customWebFilter, SecurityWebFiltersOrder.AUTHORIZATION);

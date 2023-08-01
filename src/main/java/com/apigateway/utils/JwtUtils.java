@@ -60,6 +60,7 @@ public class JwtUtils {
         }
         catch (ResourceAccessException resourceAccessException){
             log.info("ResourceAccessException");
+
             throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(503),"The Service is temporarily unavailable");
         }
 
