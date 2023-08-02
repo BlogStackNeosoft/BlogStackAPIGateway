@@ -43,6 +43,10 @@ public class CustomWebFilter implements WebFilter {
                 .getFirst(HttpHeaders.AUTHORIZATION)
                 .substring(7);
 
+        log.info("Token: "+exchange.getRequest()
+                .getHeaders()
+                .getFirst(HttpHeaders.AUTHORIZATION));
+
         Claims claims = this.jwtUtils.parsClaims(jwtToken);
         List<String> tokenEncryptedRoles = (List) claims.get(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.CLAIM_EXTRACTION_KEY);
 

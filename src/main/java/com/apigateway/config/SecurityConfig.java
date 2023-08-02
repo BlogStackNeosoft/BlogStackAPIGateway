@@ -40,7 +40,7 @@ public class SecurityConfig {
             configuration.setAllowedHeaders(List.of("*"));
             return configuration;
         });
-
+        serverHttpSecurity.addFilterBefore(customWebFilter, SecurityWebFiltersOrder.FIRST);
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable())
 
 
