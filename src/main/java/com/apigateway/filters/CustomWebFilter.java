@@ -1,6 +1,7 @@
 package com.apigateway.filters;
 
 import com.apigateway.commons.BlogStackApiGatewayCommons;
+import com.apigateway.commons.BlogStackUserManagementServiceBaseEndpoints;
 import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
 import com.apigateway.helpers.RoleControllerMappingHelper;
 import com.apigateway.utils.JwtUtils;
@@ -34,10 +35,17 @@ public class CustomWebFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String uri = exchange.getRequest().getURI().getPath();
 
+        if(uri.contains(BlogStackUserManagementServiceBaseEndpoints.AUTHENTICATION_CONTROLLER))
+            return chain.filter(exchange);
+
         String jwtToken = exchange.getRequest()
                 .getHeaders()
                 .getFirst(HttpHeaders.AUTHORIZATION)
                 .substring(7);
+
+        log.info("Token: "+exchange.getRequest()
+                .getHeaders()
+                .getFirst(HttpHeaders.AUTHORIZATION));
 
         Claims claims = this.jwtUtils.parsClaims(jwtToken);
         List<String> tokenEncryptedRoles = (List) claims.get(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.CLAIM_EXTRACTION_KEY);

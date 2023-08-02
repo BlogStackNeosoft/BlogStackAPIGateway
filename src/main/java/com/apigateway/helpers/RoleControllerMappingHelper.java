@@ -40,6 +40,10 @@ public class RoleControllerMappingHelper {
         blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.ANSWERS_CONTROLLER);
         blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.COMMENTS_CONTROLLER);
         blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.SUB_CATEGORY_CONTROLLER);
+        blogStackUserEndpoints.add(BlogStackUserManagementServiceBaseEndpoints.USER_CONTROLLER);
+        blogStackUserEndpoints.add(BlogStackUserManagementServiceBaseEndpoints.ROLES_CONTROLLER);
+
+
 
 
         // adding the user permitted endpoints to map as key and value
