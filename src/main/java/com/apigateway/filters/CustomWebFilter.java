@@ -1,6 +1,7 @@
 package com.apigateway.filters;
 
 import com.apigateway.commons.BlogStackApiGatewayCommons;
+import com.apigateway.commons.BlogStackUserManagementServiceBaseEndpoints;
 import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
 import com.apigateway.helpers.RoleControllerMappingHelper;
 import com.apigateway.utils.JwtUtils;
@@ -33,6 +34,9 @@ public class CustomWebFilter implements WebFilter {
     @SneakyThrows(Exception.class)
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String uri = exchange.getRequest().getURI().getPath();
+
+        if(uri.contains(BlogStackUserManagementServiceBaseEndpoints.AUTHENTICATION_CONTROLLER))
+            return chain.filter(exchange);
 
         String jwtToken = exchange.getRequest()
                 .getHeaders()
