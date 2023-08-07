@@ -43,11 +43,11 @@ public class JwtUtils {
         }
         catch (SignatureException signatureException){
             log.info("SignatureException");
-            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"JWT signature does not match locally computed signature");
+            throw new BlogStackApiGatewayCustomException("JWT signature does not match locally computed signature");
         }
         catch (ExpiredJwtException expiredJwtException){
             log.info("Expiration-Exception");
-            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(401),"JWT token has expired");
+            throw new BlogStackApiGatewayCustomException("JWT token has expired");
         }
 
 
@@ -61,7 +61,7 @@ public class JwtUtils {
         catch (ResourceAccessException resourceAccessException){
             log.info("ResourceAccessException");
 
-            throw new BlogStackApiGatewayCustomException(HttpStatusCode.valueOf(503),"The Service is temporarily unavailable");
+            throw new BlogStackApiGatewayCustomException("The Service is temporarily unavailable");
         }
 
 
