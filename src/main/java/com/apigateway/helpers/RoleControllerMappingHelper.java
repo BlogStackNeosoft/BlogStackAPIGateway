@@ -28,6 +28,10 @@ public class RoleControllerMappingHelper {
         blogStackAdminEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.COMMENTS_CONTROLLER);
         blogStackAdminEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.QUESTION_CONTROLLER);
         blogStackAdminEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.SUB_CATEGORY_CONTROLLER);
+        blogStackAdminEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.CATEGORY_CONTROLLER);
+        blogStackAdminEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.FILE_UPLOAD_CONTROLLER);
+        blogStackAdminEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.BLOG_MASTER_CONTROLLER);
+        blogStackAdminEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.BLOG_COMMENT_MASTER_CONTROLLER);
 
         // Adding the admin permitted endpoints to the map as key and value
         blogStackRoleToControllerMapper.put(BlogStackUserRolesCommons.BLOG_STACK_ADMIN_ROLE,blogStackAdminEndpoints);
@@ -42,6 +46,10 @@ public class RoleControllerMappingHelper {
         blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.SUB_CATEGORY_CONTROLLER);
         blogStackUserEndpoints.add(BlogStackUserManagementServiceBaseEndpoints.USER_CONTROLLER);
         blogStackUserEndpoints.add(BlogStackUserManagementServiceBaseEndpoints.ROLES_CONTROLLER);
+        blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.CATEGORY_CONTROLLER);
+        blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.FILE_UPLOAD_CONTROLLER);
+        blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.BLOG_MASTER_CONTROLLER);
+        blogStackUserEndpoints.add(BlogStackQnaHubServiceBaseEndpoints.BLOG_COMMENT_MASTER_CONTROLLER);
 
 
 
