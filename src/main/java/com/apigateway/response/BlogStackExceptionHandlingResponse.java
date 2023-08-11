@@ -11,7 +11,6 @@ import java.time.Instant;
 @Setter
 @ToString
 public class BlogStackExceptionHandlingResponse {
-
     private String message;
     private String code;
     private Instant timeStamp;

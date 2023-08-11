@@ -1,31 +1,19 @@
 package com.apigateway.filters;
 
-import com.apigateway.commons.BlogStackApiGatewayCommons;
-import com.apigateway.commons.BlogStackUserManagementServiceBaseEndpoints;
-import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
-import com.apigateway.helpers.RoleControllerMappingHelper;
 import com.apigateway.utils.JwtUtils;
-import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Slf4j
 @Component
-public class CustomWebFilter implements WebFilter {
+public class RoleAuthorizationWebFilter implements WebFilter {
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -33,7 +21,8 @@ public class CustomWebFilter implements WebFilter {
     @Override
     @SneakyThrows(Exception.class)
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String uri = exchange.getRequest().getURI().getPath();
+        exchange.getRequest().getMethod();
+      /*  String uri = exchange.getRequest().getURI().getPath();
 
         if(uri.contains(BlogStackUserManagementServiceBaseEndpoints.AUTHENTICATION_CONTROLLER))
             return chain.filter(exchange);
@@ -49,6 +38,7 @@ public class CustomWebFilter implements WebFilter {
 
         Claims claims = this.jwtUtils.parsClaims(jwtToken);
         List<String> tokenEncryptedRoles = (List) claims.get(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.CLAIM_EXTRACTION_KEY);
+
 
         log.info("Roles encrypted in token: {}",tokenEncryptedRoles);
 
@@ -68,21 +58,26 @@ public class CustomWebFilter implements WebFilter {
                     while(blogStackEndponitsIterator.hasNext()){
                         if(blogStackEndponitsIterator.next().equals(uri))
                         {
-                            /*log.info("The control has reached till the inner code of incrementing the counter");*/
+
+log.info("The control has reached till the inner code of incrementing the counter");*//*
+
                             count++;
                             log.info("Inside count increment");
                             break BLOGSTACK_OUTER_WHILE_LOOP;
                         }
                     }
                 }
+
             }
         }
+
 
         if(count == 0){
             log.info("unauthorized exception");
             throw new BlogStackApiGatewayCustomException("The user is not authorized to access the resource");
         }
 
+        */
 
         return chain.filter(exchange);
     }

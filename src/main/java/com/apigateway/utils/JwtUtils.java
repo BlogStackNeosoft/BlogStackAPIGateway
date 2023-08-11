@@ -1,12 +1,15 @@
 package com.apigateway.utils;
 
+import com.apigateway.commons.BlogStackApiGatewayCommons;
 import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
+import com.apigateway.httpexchange.IUserManagementHttpExchange;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -17,16 +20,17 @@ import java.util.function.Function;
 @Component
 @Slf4j
 public class JwtUtils {
-
-
-    private static final long EXPIRATION_DURATION = 20 * 60 * 60 * 1000; //24 HOURS
+    private static final long EXPIRATION_DURATION = BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.TWENTY_FOUR_HOURS;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtils.class);
 
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final String SECRET_KEY = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
+    @Autowired
+    private IUserManagementHttpExchange userManagementHttpExchange;
+
+    private static final String SECRET_KEY = BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.JWT_SIGNATURE_KEY;
 
     public String getSubject(String token)
     {
@@ -43,11 +47,11 @@ public class JwtUtils {
         }
         catch (SignatureException signatureException){
             log.info("SignatureException");
-            throw new BlogStackApiGatewayCustomException("JWT signature does not match locally computed signature");
+            throw new BlogStackApiGatewayCustomException(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.TOKEN_SIGNATURE_UNVERIFIED);
         }
         catch (ExpiredJwtException expiredJwtException){
             log.info("Expiration-Exception");
-            throw new BlogStackApiGatewayCustomException("JWT token has expired");
+            throw new BlogStackApiGatewayCustomException(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.JWT_TOKEN_EXPIRED);
         }
 
 
@@ -56,12 +60,16 @@ public class JwtUtils {
         final String email = getSubject(token);
         Optional<?> user = null;
         try{
-            user = restTemplate.getForEntity("http://localhost:9095/v1.0/user/"+email,Optional.class).getBody();
+            log.info("Before Asynchronous call");
+            ResponseEntity<?> userResponseEntity = this.userManagementHttpExchange.fetchUserById(email);
+            log.info("After Asysnchornous call");
+            user = (Optional<?>) userResponseEntity.getBody();
+            // user = restTemplate.getForEntity("http://localhost:9095/v1.0/user/"+email,Optional.class).getBody();
         }
         catch (ResourceAccessException resourceAccessException){
             log.info("ResourceAccessException");
 
-            throw new BlogStackApiGatewayCustomException("The Service is temporarily unavailable");
+            throw new BlogStackApiGatewayCustomException(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.SERVICE_UNAVAILABLE);
         }
 
 
