@@ -56,7 +56,7 @@ public class JwtUtils {
         final String email = getSubject(token);
         Optional<?> user = null;
         try{
-            user = restTemplate.getForEntity("http://localhost:9091/v1.0/user/"+email,Optional.class).getBody();
+            user = restTemplate.getForEntity("http://localhost:9095/v1.0/user/"+email,Optional.class).getBody();
         }
         catch (ResourceAccessException resourceAccessException){
             log.info("ResourceAccessException");

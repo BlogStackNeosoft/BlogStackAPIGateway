@@ -12,19 +12,18 @@ spring:
         - id: QNAHUB-SERVICE
           uri: http://localhost:9090
           predicates:
-            - Path=/v1.0/question/**,/v1.0/answer/**,/v1.0/category/**,/v1.0/comment/**,/v1.0/subcategory/**
-
+            - Path=/v1.0/question/**,/v1.0/answer/**,/v1.0/comment/**
         - id: USERMANAGEMENTSERVICE
           uri: http://localhost:9095
           predicates:
             - Path=/v1.0/authentication/**,/v1.0/role/**,/v1.0/user/**
 
+        - id: COMMONSERVICE
+          uri: http://localhost:9091
+          predicates:
+            - Path=/v1.0/category/**,/v1.0/file-upload/**,/v1.0/sub-category/**
+
         - id: BLOGHUBSERVICE
           uri: http://localhost:9092
           predicates:
-            - Path=
-
-        - id: COMMONSSERVICE
-          uri: http://localhost:909
-          predicates:
-            - Path=/v1.0/authentication/**,/v1.0/role/**,/v1.0/user/**
+            - Path=/v1.0/blog/**,/v1.0/blog-comments/**

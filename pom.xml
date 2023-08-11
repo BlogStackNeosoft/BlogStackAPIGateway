@@ -8,7 +8,8 @@
 		<version>3.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com</groupId>
+
+	<groupId>com.blogstack</groupId>
 	<artifactId>BlogStackApiGateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>BlogStackApiGateway</name>
@@ -59,6 +60,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Internal Dependencies-->
+		<dependency>
+			<groupId>com.blogstack</groupId>
+			<artifactId>BlogStackAOPService</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
