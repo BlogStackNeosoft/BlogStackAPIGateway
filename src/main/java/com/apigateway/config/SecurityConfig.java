@@ -3,18 +3,15 @@ package com.apigateway.config;
 import com.apigateway.commons.BlogStackApiGatewayEnabledEndpoints;
 import com.apigateway.customproviders.CustomReactiveManager;
 import com.apigateway.customproviders.CustomSecurityContext;
-import com.apigateway.filters.CustomWebFilter;
+import com.apigateway.filters.RoleAuthorizationWebFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import reactor.core.publisher.Mono;
 
@@ -25,7 +22,7 @@ import java.util.List;
 public class SecurityConfig {
 
     @Autowired
-    private CustomWebFilter customWebFilter;
+    private RoleAuthorizationWebFilter roleAuthorizationWebFilter;
     @Autowired
     private CustomSecurityContext customeSecurityContext;
 
@@ -45,7 +42,7 @@ public class SecurityConfig {
         });
 
         // code to add a custom filter to run before Security filter chain
-        serverHttpSecurity.addFilterBefore(customWebFilter, SecurityWebFiltersOrder.FIRST);
+        serverHttpSecurity.addFilterBefore(roleAuthorizationWebFilter, SecurityWebFiltersOrder.FIRST);
 
         // disable cross site request forgery
         serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable());
@@ -66,7 +63,7 @@ public class SecurityConfig {
         // Supplying the securitycontext repository
         serverHttpSecurity.securityContextRepository(this.customeSecurityContext);
 
-        // Supplying the
+        // Supplying the authentication manager to authenticate the token
         serverHttpSecurity.authenticationManager(this.authenticationManager);
 
         serverHttpSecurity.exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint((swe, e) ->

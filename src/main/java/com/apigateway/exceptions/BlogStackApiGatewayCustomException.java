@@ -1,8 +1,5 @@
 package com.apigateway.exceptions;
 
-import org.springframework.http.HttpStatusCode;
-import org.springframework.web.server.ResponseStatusException;
-
 public class BlogStackApiGatewayCustomException extends RuntimeException {
     public BlogStackApiGatewayCustomException() {
     }
