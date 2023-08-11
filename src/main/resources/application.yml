@@ -13,7 +13,6 @@ spring:
           uri: http://localhost:9090
           predicates:
             - Path=/v1.0/question/**,/v1.0/answer/**,/v1.0/comment/**
-
         - id: USERMANAGEMENTSERVICE
           uri: http://localhost:9095
           predicates:

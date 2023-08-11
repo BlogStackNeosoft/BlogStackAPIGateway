@@ -1,5 +1,6 @@
 package com.apigateway.config;
 
+import com.apigateway.commons.BlogStackApiGatewayEnabledEndpoints;
 import com.apigateway.customproviders.CustomReactiveManager;
 import com.apigateway.customproviders.CustomSecurityContext;
 import com.apigateway.filters.CustomWebFilter;
@@ -33,6 +34,8 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity){
+
+        // code to allow cors
         serverHttpSecurity.cors().configurationSource(request -> {
             CorsConfiguration configuration = new CorsConfiguration();
             configuration.setAllowedOrigins(List.of("*"));
@@ -40,21 +43,32 @@ public class SecurityConfig {
             configuration.setAllowedHeaders(List.of("*"));
             return configuration;
         });
+
+        // code to add a custom filter to run before Security filter chain
         serverHttpSecurity.addFilterBefore(customWebFilter, SecurityWebFiltersOrder.FIRST);
-        serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable())
 
+        // disable cross site request forgery
+        serverHttpSecurity.csrf(csrfSpec -> csrfSpec.disable());
 
-                // .cors((corsSpec -> corsSpec.disable()))
-                .authorizeExchange(exchange-> exchange.pathMatchers("/v1.0/authentication/**","/v1.0/role/**").permitAll()
-
-                //.cors((corsSpec -> corsSpec.disable()))
-                // .cors((corsSpec -> corsSpec.disable()))
-
+        // securing the required endpoints and enabling the required endpoints
+        serverHttpSecurity.authorizeExchange(exchange-> exchange.pathMatchers(
+                                BlogStackApiGatewayEnabledEndpoints.AUTHENTICATION_CONTROLLER_SIGN_IN,
+                                BlogStackApiGatewayEnabledEndpoints.AUTHENTICATION_CONTROLLER_SIGN_UP,
+                                BlogStackApiGatewayEnabledEndpoints.AUTHENTICATION_CONTROLLER_REFRESH_TOKEN,
+                                BlogStackApiGatewayEnabledEndpoints.USER_CONTROLLER_VALIDATE_OTP,
+                                BlogStackApiGatewayEnabledEndpoints.USER_CONTROLLER_FORGOT_PASSWORD,
+                                BlogStackApiGatewayEnabledEndpoints.USER_CONTROLLER_RESET_PASSWORD
+                        ).permitAll()
                         .anyExchange().authenticated())
                 .formLogin(formLoginSpec -> formLoginSpec.disable());
-        // serverHttpSecurity.addFilterAfter(this.customWebFilter, SecurityWebFiltersOrder.AUTHORIZATION);
+
+
+        // Supplying the securitycontext repository
         serverHttpSecurity.securityContextRepository(this.customeSecurityContext);
+
+        // Supplying the
         serverHttpSecurity.authenticationManager(this.authenticationManager);
+
         serverHttpSecurity.exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint((swe, e) ->
                         Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED))
                 ).accessDeniedHandler((swe, e) ->
