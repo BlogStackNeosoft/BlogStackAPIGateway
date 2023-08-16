@@ -1,5 +1,6 @@
 package com.apigateway.customproviders;
 
+import com.apigateway.httpexchange.IUserManagementHttpExchange;
 import com.apigateway.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -15,17 +16,25 @@ import reactor.core.publisher.Mono;
 public class CustomReactiveManager implements ReactiveAuthenticationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomReactiveManager.class);
-    @Autowired
     private JwtUtils jwtUtils;
+    private IUserManagementHttpExchange userManagementHttpExchange;
+
+    @Autowired
+    public CustomReactiveManager(JwtUtils jwtUtils, IUserManagementHttpExchange userManagementHttpExchange) {
+        this.jwtUtils = jwtUtils;
+        this.userManagementHttpExchange = userManagementHttpExchange;
+    }
+
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
+
         //authentication object will have token in the principal
-        log.info("Control inside authenticate method");
+        // log.info("Control inside authenticate method");
         String token = (String)authentication.getPrincipal();
-        boolean isValidated = jwtUtils.validateToken(token);
-        if(isValidated)
+       // boolean isValidated = jwtUtils.validateToken(token);
+        //if(isValidated)
             return Mono.just(new UsernamePasswordAuthenticationToken(token, null, null));
-        else
-        return null;
+        // else
+       // return null;
     }
 }
