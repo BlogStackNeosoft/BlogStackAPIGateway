@@ -1,6 +1,7 @@
 package com.apigateway.filters;
 
 import com.apigateway.commons.BlogStackApiGatewayCommons;
+import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
 import com.apigateway.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class TokenValidationWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-        log.info("Insede token validation filter");
+        log.info("Inside token validation filter");
         String userId = exchange.getRequest().getHeaders()
                       .getFirst(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.HTTP_HEADER_USER_ID);
 
@@ -35,6 +36,9 @@ public class TokenValidationWebFilter implements WebFilter {
 
         log.info("token: {}",jwtToken);
         Boolean isValidated = this.jwtUtils.validateTokenForClaims(jwtToken,userId);
+        if(isValidated)
         return chain.filter(exchange);
+        else
+            throw new BlogStackApiGatewayCustomException("Unauthorized User");
     }
 }

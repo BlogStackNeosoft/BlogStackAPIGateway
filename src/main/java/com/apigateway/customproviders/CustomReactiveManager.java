@@ -1,6 +1,5 @@
 package com.apigateway.customproviders;
 
-import com.apigateway.httpexchange.IUserManagementHttpExchange;
 import com.apigateway.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -17,12 +16,10 @@ public class CustomReactiveManager implements ReactiveAuthenticationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomReactiveManager.class);
     private JwtUtils jwtUtils;
-    private IUserManagementHttpExchange userManagementHttpExchange;
 
     @Autowired
-    public CustomReactiveManager(JwtUtils jwtUtils, IUserManagementHttpExchange userManagementHttpExchange) {
+    public CustomReactiveManager(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
-        this.userManagementHttpExchange = userManagementHttpExchange;
     }
 
     @Override

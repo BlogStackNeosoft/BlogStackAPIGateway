@@ -2,7 +2,6 @@ package com.apigateway.utils;
 
 import com.apigateway.commons.BlogStackApiGatewayCommons;
 import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
-import com.apigateway.httpexchange.IUserManagementHttpExchange;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -20,11 +19,14 @@ import java.util.function.Function;
 public class JwtUtils {
     private static final long EXPIRATION_DURATION = BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.TWENTY_FOUR_HOURS;
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtils.class);
-    @Autowired
+
     private RestTemplate restTemplate;
+
     @Autowired
-    private IUserManagementHttpExchange userManagementHttpExchange;
-    // private static final String SECRET_KEY = BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.JWT_SIGNATURE_KEY;
+    public JwtUtils(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     public String getSubject(String token,String jwtSecret)
     {
         log.info("inside get subject method");
