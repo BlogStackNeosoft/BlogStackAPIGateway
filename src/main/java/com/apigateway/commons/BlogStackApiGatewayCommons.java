@@ -19,7 +19,7 @@ public enum BlogStackApiGatewayCommons {
      public final Integer INDEX_SEVEN = 7;
      public final String HTTP_HEADER_USER_ID = "userId";
 
-     public final String USER_MANAGEMENT_GET_BY_ID_URL = "http://localhost:9095/v1.0/user/user-id/";
+     public final String USER_MANAGEMENT_GET_BY_ID_URL = "http://localhost:9095/v1.0/user/user/";
      public final String MAP_KEY_DATA = "data";
 
      public final String SECRET_JSON_VALUE = "bsuJwtSecret";
