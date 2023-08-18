@@ -1,46 +1,55 @@
-package com.apigateway.filters;
+package com.apigateway.helpers;
 
+import com.apigateway.commons.BlogStackApiGatewayCommons;
+import com.apigateway.commons.BlogStackUserManagementServiceBaseEndpoints;
+import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
 import com.apigateway.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-@Slf4j
 @Component
-public class RoleAuthorizationWebFilter implements WebFilter {
+@Slf4j
+public class RolesMappingHelper {
 
-    @Autowired
+
     private JwtUtils jwtUtils;
 
-    @Override
+    @Autowired
+    public RolesMappingHelper(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+    }
+
     @SneakyThrows(Exception.class)
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        exchange.getRequest().getMethod();
-      /*  String uri = exchange.getRequest().getURI().getPath();
+    public boolean filter(ServerWebExchange exchange) {
+        // exchange.getRequest().getMethod();
+        String uri = exchange.getRequest().getURI().getPath();
 
         if(uri.contains(BlogStackUserManagementServiceBaseEndpoints.AUTHENTICATION_CONTROLLER))
-            return chain.filter(exchange);
+            return true;
 
         String jwtToken = exchange.getRequest()
                 .getHeaders()
                 .getFirst(HttpHeaders.AUTHORIZATION)
                 .substring(7);
 
-        log.info("Token: "+exchange.getRequest()
+        String userId = exchange.getRequest()
                 .getHeaders()
-                .getFirst(HttpHeaders.AUTHORIZATION));
+                .getFirst(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.HTTP_HEADER_USER_ID);
 
-        Claims claims = this.jwtUtils.parsClaims(jwtToken);
+        Claims claims = jwtUtils.parsClaims(jwtToken, RestCallsHelper.userId(userId));
         List<String> tokenEncryptedRoles = (List) claims.get(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.CLAIM_EXTRACTION_KEY);
 
 
-        log.info("Roles encrypted in token: {}",tokenEncryptedRoles);
+        //log.info("Roles encrypted in token: {}",tokenEncryptedRoles);
 
         Map<String, Set<String>> blogStackAllRoleToControllerMapping =  RoleControllerMappingHelper.getBlogStackAllRoleToControllerMapping();
         int count = 0;
@@ -58,9 +67,7 @@ public class RoleAuthorizationWebFilter implements WebFilter {
                     while(blogStackEndponitsIterator.hasNext()){
                         if(blogStackEndponitsIterator.next().equals(uri))
                         {
-
-log.info("The control has reached till the inner code of incrementing the counter");*//*
-
+                            log.info("The control has reached till the inner code of incrementing the counter");
                             count++;
                             log.info("Inside count increment");
                             break BLOGSTACK_OUTER_WHILE_LOOP;
@@ -71,14 +78,12 @@ log.info("The control has reached till the inner code of incrementing the counte
             }
         }
 
-
         if(count == 0){
             log.info("unauthorized exception");
             throw new BlogStackApiGatewayCustomException("The user is not authorized to access the resource");
         }
 
-        */
 
-        return chain.filter(exchange);
+        return true;
     }
 }

@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @Slf4j
 public class CustomSecurityContext implements ServerSecurityContextRepository {
@@ -36,7 +39,10 @@ public class CustomSecurityContext implements ServerSecurityContextRepository {
                 .filter(authHeader -> authHeader.startsWith(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.BEARER))
                 .flatMap(authHeader -> {
                     String token = authHeader.substring(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.INDEX_SEVEN);
-                    Authentication auth = new UsernamePasswordAuthenticationToken(token,token);
+                    List encryptionList = new ArrayList(2);
+                    encryptionList.add(exchange.getRequest().getHeaders().getFirst(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.HTTP_HEADER_USER_ID));
+                    encryptionList.add(exchange);
+                    Authentication auth = new UsernamePasswordAuthenticationToken(token,encryptionList);
                     log.info("Before executing authenticate method");
                     return this.reactiveAuthenticationManager.authenticate(auth)
                             .switchIfEmpty(Mono.error(new Exception(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.INVALID_AUTHENTICATION_TOKEN)))

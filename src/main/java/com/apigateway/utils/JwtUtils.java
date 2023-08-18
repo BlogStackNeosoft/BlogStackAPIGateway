@@ -2,10 +2,9 @@ package com.apigateway.utils;
 
 import com.apigateway.commons.BlogStackApiGatewayCommons;
 import com.apigateway.exceptions.BlogStackApiGatewayCustomException;
+import com.apigateway.helpers.RestCallsHelper;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
@@ -17,9 +16,7 @@ import java.util.function.Function;
 @Component
 @Slf4j
 public class JwtUtils {
-    private static final long EXPIRATION_DURATION = BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.TWENTY_FOUR_HOURS;
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtils.class);
-
+   // private static final long EXPIRATION_DURATION = BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.TWENTY_FOUR_HOURS;
     private RestTemplate restTemplate;
 
     @Autowired
@@ -68,19 +65,11 @@ public class JwtUtils {
 
         String jwtSecret = null;
         try{
-            log.info("Before Asynchronous call");
+            // log.info("Before Asynchronous call");
             // ResponseEntity<?> userResponseEntity = this.userManagementHttpExchange.getUserById(userId);
-            log.info("After Asysnchornous call");
+            // log.info("After Asysnchornous call");
             //user = (Optional<JwtSecretsBean>) userResponseEntity.getBody();
-             LinkedHashMap map = (LinkedHashMap) restTemplate.getForEntity(
-                                                BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.USER_MANAGEMENT_GET_BY_ID_URL+userId,
-                                                    Optional.class).getBody().get();
-
-            LinkedHashMap data = (LinkedHashMap) map.get(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.MAP_KEY_DATA);
-             jwtSecret = (String)data.get(BlogStackApiGatewayCommons.API_GATEWAY_COMMONS.SECRET_JSON_VALUE);
-            //jwtSecret = (String) status.get("bsuJwtSecret");
-            log.info("Secret: {}",jwtSecret);
-
+            jwtSecret = RestCallsHelper.userId(userId);
         }
         catch (ResourceAccessException resourceAccessException){
             log.info("ResourceAccessException");
